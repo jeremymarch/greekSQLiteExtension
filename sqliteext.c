@@ -37,17 +37,26 @@ select lemma from hqvocab order by lemma collate anycollseq limit 20;
 #include "sqlite3ext.h"
 SQLITE_EXTENSION_INIT1
 #include <string.h>
+#include <stdio.h>
+#include "accent.h"
 
 static int anyCollFunc(
   void *NotUsed,
   int nKey1, const void *pKey1,
   int nKey2, const void *pKey2
 ){
+    /*
   int rc, n;
   n = nKey1<nKey2 ? nKey1 : nKey2;
   rc = memcmp(pKey1, pKey2, n);
   if( rc==0 ) rc = nKey1 - nKey2;
-  return rc * -1;
+    */
+    
+    int a = compareSort(pKey1, pKey2) * -1;
+    fprintf(stderr, "s: %d\n", a);
+    return a;
+    
+  //return rc * -1;
 }
 
 static void anyCollNeeded(
