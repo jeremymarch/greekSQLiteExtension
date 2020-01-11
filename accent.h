@@ -63,6 +63,6 @@ bool makeLetter(UCS2 *ucs2String, int *newLetterLen, UCS2 letterCode, int accent
 
 bool isCombiningDiacritic(UCS2 l);
 
-int compareSort(const unsigned char *a, const unsigned char *b);
+int compareSort(int lena, const unsigned char *a, int lenb, const unsigned char *b);
 
 #endif /* accent_h */
