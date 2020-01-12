@@ -950,31 +950,6 @@ int compareSort(int lena, const unsigned char *aa, int lenb, const unsigned char
     UCS2 a1, b1;
     int a2, b2;
     
-    
-    /*
-    tempa = utf8_to_ucs2 (a, &a);
-    tempb = utf8_to_ucs2 (b, &b);
-    typea = analyzePrecomposedLetter(tempa, &a1, &a2);
-    typeb = analyzePrecomposedLetter(tempb, &b1, &b2);
-    int sorta = basicGreekLookUp[a1 - 0x0370][2];
-    int sortb = basicGreekLookUp[b1 - 0x0370][2];
-    
-    if (sorta == NOSORT || sortb == NOSORT)
-    {
-        fprintf(stderr, "s: %04x %04x\n", a1, b1);
-        assert(1==2);
-    }
-    if (sorta > sortb)
-        return -1;
-    else if (sortb > sorta)
-        return 1;
-    else
-        return 0;
-    
-    */
-    
-    
-    
     for( ; *a ; )
     {
         tempa = utf8_to_ucs2 (a, &a);
@@ -1022,10 +997,15 @@ int compareSort(int lena, const unsigned char *aa, int lenb, const unsigned char
                 //assert(1 == 2);
                 return -1;//error
             }
+        
             //get sort orders
-            int sorta = basicGreekLookUp[a1 - 0x0370][2];
-            int sortb = basicGreekLookUp[b1 - 0x0370][2];
-            
+            int sorta = 0;
+            int sortb = 0;
+            if (a1 >= 0x0370 && a1 <= 0x03FF && b1 >= 0x0370 && b1 <= 0x03FF)
+            {
+                sorta = basicGreekLookUp[a1 - 0x0370][2];
+                sortb = basicGreekLookUp[b1 - 0x0370][2];
+            }
             //compare here
             if (sorta > sortb)
             {
