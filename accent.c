@@ -932,65 +932,65 @@ int scanLetter(UCS2 *ucs2String, int len, UCS2 *letterCode, int *accentBitMask, 
     return letterLen;
 }
 */
-int compareSort(int lena, const unsigned char *aa, int lenb, const unsigned char *bb)
+
+//this should consider space or comma the end of the word
+int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned char *b)
 {
-    unsigned char aaa[1024];
-    unsigned char bbb[1024];
-    
-    memcpy(aaa, aa, lena);
-    memcpy(bbb, bb, lenb);
-    aaa[lena] = '\0';
-    bbb[lenb] = '\0';
-    
-    unsigned char *a = aaa;
-    unsigned char *b = bbb;
-    
-    int tempa, tempb; //because UCS2 is unsigned.
+    int ucs2Chara, ucs2Charb; //because UCS2 is unsigned.
     int typea, typeb;
     UCS2 a1, b1;
     int a2, b2;
     
-    for( ; *a ; )
+    int lenaSeen = 0;
+    int lenbSeen = 0;
+    unsigned char *ap;
+    unsigned char *bp;
+    
+    for( ; lenaSeen < lengtha ; )
     {
-        tempa = utf8_to_ucs2 (a, &a);
-        if (tempa == -1)
+        ucs2Chara = utf8_to_ucs2 (a, &ap);
+        lenaSeen += (ap - a);
+        a = ap;
+        if (ucs2Chara == -1)
         {
             assert(1 == 2);
             return -1; //error
         }
         else
         {
-            if (tempa == 0x0020 || tempa == 0x002C)
+            if (ucs2Chara == 0x0020 || ucs2Chara == 0x002C)
             {
                 continue;
             }
-            if (isCombiningDiacritic(tempa))
+            if (isCombiningDiacritic(ucs2Chara))
             {
                 continue;
             }
-            for( ; *b ; )
+            for( ; lenbSeen < lengthb ; )
             {
-                tempb = utf8_to_ucs2 (b, &b);
-                if (tempb == -1)
+                ucs2Charb = utf8_to_ucs2 (b, &bp);
+                lenbSeen += (bp - b);
+                b = bp;
+                if (ucs2Charb == -1)
                 {
                     assert(1 == 2);
                     return -1; //error
                 }
                 else
                 {
-                    if (tempb == 0x0020 || tempb == 0x002C)
+                    if (ucs2Charb == 0x0020 || ucs2Charb == 0x002C)
                     {
                         continue;
                     }
-                    if (!isCombiningDiacritic(tempb))
+                    if (!isCombiningDiacritic(ucs2Charb))
                     {
                         break;
                     }
                 }
             }
             //check valid chars and get base chars if accented
-            typea = analyzePrecomposedLetter(tempa, &a1, &a2);
-            typeb = analyzePrecomposedLetter(tempb, &b1, &b2);
+            typea = analyzePrecomposedLetter(ucs2Chara, &a1, &a2);
+            typeb = analyzePrecomposedLetter(ucs2Charb, &b1, &b2);
             if (typea == NOCHAR || typeb == NOCHAR)
             {
                 //fprintf(stderr, "s: %s %s\n", a, b);
