@@ -955,7 +955,7 @@ int scanLetter(UCS2 *ucs2String, int len, UCS2 *letterCode, int *accentBitMask, 
 //this should consider space or comma the end of the word
 int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned char *b)
 {
-    int ucs2Chara, ucs2Charb; //because UCS2 is unsigned.
+    int ucs2Chara, ucs2Charb; //int because UCS2 is unsigned.
     int typea, typeb;
     UCS2 a1, b1;
     int a2, b2;
@@ -1041,9 +1041,9 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
                 if ((lenaSeen >= lengtha - 1) && (lenbSeen >= lengthb - 1))
                     return 0;
                 else if (lenaSeen >= lengtha - 1)
-                    return 1;
-                else if (lenbSeen >= lengthb - 1)
                     return -1;
+                else if (lenbSeen >= lengthb - 1)
+                    return 1;
                 else
                     continue;
             }
@@ -1052,9 +1052,9 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
     if ((lenaSeen >= lengtha - 1) && (lenbSeen >= lengthb - 1))
         return 0;
     else if (lenaSeen >= lengtha - 1)
-        return 1;
-    else if (lenbSeen >= lengthb - 1)
         return -1;
+    else if (lenbSeen >= lengthb - 1)
+        return 1;
     else
     {
         assert(1 == 2); //error
