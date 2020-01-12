@@ -958,7 +958,7 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
         }
         else
         {
-            if (ucs2Chara == 0x0020 || ucs2Chara == 0x002C)
+            if (ucs2Chara == 0x0020 || ucs2Chara == 0x002C || ucs2Chara == 0x2014 || ucs2Chara == 0x002D)
             {
                 continue;
             }
@@ -978,7 +978,7 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
                 }
                 else
                 {
-                    if (ucs2Charb == 0x0020 || ucs2Charb == 0x002C)
+                    if (ucs2Charb == 0x0020 || ucs2Charb == 0x002C || ucs2Charb == 0x2014 || ucs2Charb == 0x002D)
                     {
                         continue;
                     }
