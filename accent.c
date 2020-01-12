@@ -993,7 +993,7 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
             typeb = analyzePrecomposedLetter(ucs2Charb, &b1, &b2);
             if (typea == NOCHAR || typeb == NOCHAR)
             {
-                //fprintf(stderr, "s: %s %s\n", a, b);
+                //fprintf(stderr, "s: %s %s\n", a1, b);
                 //assert(1 == 2);
                 return -1;//error
             }
@@ -1009,27 +1009,36 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
             //compare here
             if (sorta > sortb)
             {
-                return -1;
+                return 1;
             }
             else if (sortb > sorta)
             {
-                return 1;
+                return -1;
             }
             else
             {
-                if (!a && !b)
+                if ((lenaSeen >= lengtha - 1) && (lenbSeen >= lengthb - 1))
                     return 0;
-                else if (!a)
-                    return -1;
-                else if (!b)
+                else if (lenaSeen >= lengtha - 1)
                     return 1;
+                else if (lenbSeen >= lengthb - 1)
+                    return -1;
                 else
                     continue;
             }
         }
     }
-    //assert(1 == 2);
-    return -1; //error
+    if ((lenaSeen >= lengtha - 1) && (lenbSeen >= lengthb - 1))
+        return 0;
+    else if (lenaSeen >= lengtha - 1)
+        return 1;
+    else if (lenbSeen >= lengthb - 1)
+        return -1;
+    else
+    {
+        assert(1 == 2); //error
+        return -1;
+    }
 }
 
 

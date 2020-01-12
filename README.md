@@ -1,6 +1,7 @@
 https://stackoverflow.com/questions/30898113/how-to-compile-an-extension-into-sqlite
 
 https://www.sqlite.org/loadext.html
+https://www.sqlite.org/howtocompile.html
 
 https://stackoverflow.com/questions/16806570/how-do-i-compare-characters-in-custom-sqlite-collation-in-objective-c
 

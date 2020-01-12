@@ -52,8 +52,8 @@ static int anyCollFunc(
   if( rc==0 ) rc = nKey1 - nKey2;
     */
     
-    int a = compareSort(nKey1, pKey1, nKey2, pKey2) * -1;
-    fprintf(stderr, "s: %d\n", a);
+    int a = compareSort(nKey1, pKey1, nKey2, pKey2);
+    //fprintf(stderr, "s: %d\n", a);
     return a;
     
   //return rc * -1;
