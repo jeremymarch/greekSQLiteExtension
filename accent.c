@@ -931,6 +931,25 @@ int scanLetter(UCS2 *ucs2String, int len, UCS2 *letterCode, int *accentBitMask, 
     end = ucs2String;
     return letterLen;
 }
+ 
+ s: 03B7 03BC
+ s: 03B9 03C4
+ s: 03B7 03B3
+ s: 03B7 03BA
+ s: 03B9 03C0
+ s: 03BD 03C9
+ s: 03B7 03BC
+ s: 03B9 03BD
+ 
+ 
+ s: 0000 03BC
+ s: 0000 03C4
+ s: 0000 03B3
+ s: 0000 03BA
+ s: 0000 03C0
+ s: 0000 03C9
+ s: 0000 03BC
+ s: 0000 03BD
 */
 
 //this should consider space or comma the end of the word
@@ -943,8 +962,8 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
     
     int lenaSeen = 0;
     int lenbSeen = 0;
-    unsigned char *ap;
-    unsigned char *bp;
+    const unsigned char *ap;
+    const unsigned char *bp;
     
     for( ; lenaSeen < lengtha ; )
     {
@@ -958,7 +977,7 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
         }
         else
         {
-            if (ucs2Chara == 0x0020 || ucs2Chara == 0x002C || ucs2Chara == 0x2014 || ucs2Chara == 0x002D)
+            if (ucs2Chara == 0x0020 || ucs2Chara == 0x002C || ucs2Chara == 0x2014 || ucs2Chara == 0x002D || ucs2Chara == 0x002E)
             {
                 continue;
             }
@@ -978,7 +997,7 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
                 }
                 else
                 {
-                    if (ucs2Charb == 0x0020 || ucs2Charb == 0x002C || ucs2Charb == 0x2014 || ucs2Charb == 0x002D)
+                    if (ucs2Charb == 0x0020 || ucs2Charb == 0x002C || ucs2Charb == 0x2014 || ucs2Charb == 0x002D || ucs2Charb == 0x002E)
                     {
                         continue;
                     }
@@ -989,12 +1008,14 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
                 }
             }
             //check valid chars and get base chars if accented
+            //a1 = 0;
+            //b1 = 0;
             typea = analyzePrecomposedLetter(ucs2Chara, &a1, &a2);
             typeb = analyzePrecomposedLetter(ucs2Charb, &b1, &b2);
             if (typea == NOCHAR || typeb == NOCHAR)
             {
-                //fprintf(stderr, "s: %s %s\n", a1, b);
-                //assert(1 == 2);
+                fprintf(stderr, "s: %04X %04X %04X %04X\n", ucs2Chara, ucs2Charb, a1, b1);
+                assert(1 == 2);
                 return -1;//error
             }
         
