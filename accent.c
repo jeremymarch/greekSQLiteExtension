@@ -931,79 +931,60 @@ int scanLetter(UCS2 *ucs2String, int len, UCS2 *letterCode, int *accentBitMask, 
     end = ucs2String;
     return letterLen;
 }
- 
- s: 03B7 03BC
- s: 03B9 03C4
- s: 03B7 03B3
- s: 03B7 03BA
- s: 03B9 03C0
- s: 03BD 03C9
- s: 03B7 03BC
- s: 03B9 03BD
- 
- 
- s: 0000 03BC
- s: 0000 03C4
- s: 0000 03B3
- s: 0000 03BA
- s: 0000 03C0
- s: 0000 03C9
- s: 0000 03BC
- s: 0000 03BD
 */
 
 //this should consider space or comma the end of the word
-int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned char *b)
+int compareSort(int len_a, const unsigned char *a, int len_b, const unsigned char *b)
 {
     const unsigned char *aa = a; //for debugging
     const unsigned char *bb = b; //for debugging
     
-    int ucs2Chara, ucs2Charb; //int because UCS2 is unsigned.
-    int typea, typeb;
-    UCS2 a1, b1;
-    int a2, b2;
+    int uc_a, uc_b; //int because UCS2 is unsigned.
+    int type_a, type_b;
+    UCS2 base_a, base_b;
+    int diacritics_a, diacritics_b;
     
-    int lenaSeen = 0;
-    int lenbSeen = 0;
-    const unsigned char *ap;
-    const unsigned char *bp;
+    int idx_a = 0;
+    int idx_b = 0;
+    const unsigned char *end_a;
+    const unsigned char *end_b;
     
-    for( ; lenaSeen < lengtha ; )
+    for( ; idx_a < len_a ; )
     {
-        ucs2Chara = utf8_to_ucs2 (a, &ap);
-        lenaSeen += (ap - a);
-        a = ap;
-        if (ucs2Chara == -1)
+        uc_a = utf8_to_ucs2 (a, &end_a);
+        idx_a += (end_a - a);
+        a = end_a;
+        if (uc_a == -1)
         {
-            assert(ucs2Chara > -1);
+            assert(uc_a > -1);
             return -1; //error
         }
         else
         {
-            if (ucs2Chara == 0x0020 || ucs2Chara == 0x002C || ucs2Chara == 0x2014 || ucs2Chara == 0x002D || ucs2Chara == 0x002E)
+            if (uc_a == 0x0020 || uc_a == 0x002C || uc_a == 0x2014 || uc_a == 0x002D || uc_a == 0x002E)
             {
                 continue;
             }
-            if (isCombiningDiacritic(ucs2Chara))
+            if (isCombiningDiacritic(uc_a))
             {
                 continue;
             }
-            for( ; lenbSeen < lengthb ; )
+            for( ; idx_b < len_b ; )
             {
-                ucs2Charb = utf8_to_ucs2 (b, &bp);
-                lenbSeen += (bp - b);
+                uc_b = utf8_to_ucs2 (b, &end_b);
+                idx_b += (end_b - b);
                 //printf("AAA: %d\n", (bp - b));
-                b = bp;
-                if (ucs2Charb == -1)
+                b = end_b;
+                if (uc_b == -1)
                 {
-                    assert(ucs2Charb > -1);
+                    assert(uc_b > -1);
                     return -1; //error
                 }
                 else
                 {
-                    if (ucs2Charb == 0x0020 || ucs2Charb == 0x002C || ucs2Charb == 0x2014 || ucs2Charb == 0x002D || ucs2Charb == 0x002E)
+                    if (uc_b == 0x0020 || uc_b == 0x002C || uc_b == 0x2014 || uc_b == 0x002D || uc_b == 0x002E)
                     {
-                        if (lenbSeen == lengthb )
+                        if (idx_b == len_b )
                         {
                             return 1; //last char in b is one to skip
                         }
@@ -1012,54 +993,54 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
                             continue;
                         }
                     }
-                    if (!isCombiningDiacritic(ucs2Charb))
+                    if (!isCombiningDiacritic(uc_b))
                     {
                         break;
                     }
                 }
             }
             
-            a1 = 0; //for debugging
-            b1 = 0; //for debugging
+            base_a = 0; //reset for debugging
+            base_b = 0; //reset for debugging
             
             //check valid chars and get base chars if accented
-            typea = analyzePrecomposedLetter(ucs2Chara, &a1, &a2);
-            typeb = analyzePrecomposedLetter(ucs2Charb, &b1, &b2);
-            if (typea == NOCHAR || typeb == NOCHAR)
+            type_a = analyzePrecomposedLetter(uc_a, &base_a, &diacritics_a);
+            type_b = analyzePrecomposedLetter(uc_b, &base_b, &diacritics_b);
+            if (type_a == NOCHAR || type_b == NOCHAR)
             {
-                fprintf(stderr, "s: %.*s B %.*s %04X %04X %04X %04X\n", lengtha, aa, lengthb, bb, ucs2Chara, ucs2Charb, a1, b1);
-                assert(typea != NOCHAR && typeb != NOCHAR);
+                fprintf(stderr, "s: %.*s B %.*s %04X %04X %04X %04X\n", len_a, aa, len_b, bb, uc_a, uc_b, base_a, base_b);
+                assert(type_a != NOCHAR && type_b != NOCHAR);
                 return -1;//error
             }
         
             //get sort orders
-            int sorta = 0;
-            int sortb = 0;
-            if (a1 >= 0x0370 && a1 <= 0x03FF && b1 >= 0x0370 && b1 <= 0x03FF)
+            int sort_a = 0;
+            int sort_b = 0;
+            if (base_a >= 0x0370 && base_a <= 0x03FF && base_b >= 0x0370 && base_b <= 0x03FF)
             {
-                sorta = basicGreekLookUp[a1 - 0x0370][2];
-                sortb = basicGreekLookUp[b1 - 0x0370][2];
+                sort_a = basicGreekLookUp[base_a - 0x0370][2];
+                sort_b = basicGreekLookUp[base_b - 0x0370][2];
             }
             //compare here
-            if (sorta > sortb)
+            if (sort_a > sort_b)
             {
                 return 1;
             }
-            else if (sortb > sorta)
+            else if (sort_b > sort_a)
             {
                 return -1;
             }
             else
             {
-                if ((lenaSeen == lengtha ) && (lenbSeen == lengthb ))
+                if ((idx_a == len_a ) && (idx_b == len_b ))
                 {
                     return 0;
                 }
-                else if (lenaSeen == lengtha )
+                else if (idx_a == len_a )
                 {
                     return -1;
                 }
-                else if (lenbSeen == lengthb )
+                else if (idx_b == len_b )
                 {
                     return 1;
                 }
@@ -1071,15 +1052,15 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
         }
     }
 
-    if ((lenaSeen == lengtha) && (lenbSeen == lengthb))
+    if ((idx_a == len_a) && (idx_b == len_b))
     {
         return 0;
     }
-    else if (lenaSeen == lengtha)
+    else if (idx_a == len_a)
     {
         return -1;
     }
-    else if (lenbSeen == lengthb)
+    else if (idx_b == len_b)
     {
         return 1;
     }
