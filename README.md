@@ -8,7 +8,7 @@ https://stackoverflow.com/questions/30898113/how-to-compile-an-extension-into-sq
 https://stackoverflow.com/questions/16806570/how-do-i-compare-characters-in-custom-sqlite-collation-in-objective-c
 
 //1. compile extension
-gcc -fPIC -shared sqliteext.c -o anycollseq.dylib
+gcc -pedantic -fPIC -shared hcgreekSQLiteCollation.c accent.c utilities.c -o hcgreek.dylib
  
 //2. comile sqlite
 gcc -DHAVE_READLINE -omysqlite shell.c sqlite3.c -lpthread -ldl -lreadline
@@ -17,6 +17,6 @@ gcc -DHAVE_READLINE -omysqlite shell.c sqlite3.c -lpthread -ldl -lreadline
 ./mysqlite hcdatadb1-5.sqlite
 
 //4. load extension and query
-.load anycollseq
+.load hcgreek
 
-select lemma from hqvocab order by lemma collate anycollseq limit 20;
+select lemma from hqvocab order by lemma collate hcgreek limit 20;
