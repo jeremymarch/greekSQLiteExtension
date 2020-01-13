@@ -955,6 +955,9 @@ int scanLetter(UCS2 *ucs2String, int len, UCS2 *letterCode, int *accentBitMask, 
 //this should consider space or comma the end of the word
 int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned char *b)
 {
+    char *aa = a; //for debugging
+    char *bb = b; //for debugging
+    
     int ucs2Chara, ucs2Charb; //int because UCS2 is unsigned.
     int typea, typeb;
     UCS2 a1, b1;
@@ -1007,14 +1010,16 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
                     }
                 }
             }
+            
+            a1 = 0; //for debugging
+            b1 = 0; //for debugging
+            
             //check valid chars and get base chars if accented
-            //a1 = 0;
-            //b1 = 0;
             typea = analyzePrecomposedLetter(ucs2Chara, &a1, &a2);
             typeb = analyzePrecomposedLetter(ucs2Charb, &b1, &b2);
             if (typea == NOCHAR || typeb == NOCHAR)
             {
-                fprintf(stderr, "s: %04X %04X %04X %04X\n", ucs2Chara, ucs2Charb, a1, b1);
+                fprintf(stderr, "s: %.*s B %.*s %04X %04X %04X %04X\n", lengtha, aa, lengthb, bb, ucs2Chara, ucs2Charb, a1, b1);
                 assert(1 == 2);
                 return -1;//error
             }
@@ -1057,16 +1062,20 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
             }
         }
     }
-    if ((lenaSeen >= lengtha - 1) && (lenbSeen >= lengthb - 1))
+    assert(1 == 2); //error
+    if ((lenaSeen > lengtha - 1) && (lenbSeen > lengthb - 1))
     {
+        fprintf(stderr, "here1\n");
         return 0;
     }
-    else if (lenaSeen >= lengtha - 1)
+    else if (lenaSeen > lengtha - 1)
     {
+        fprintf(stderr, "here2\n");
         return -1;
     }
-    else if (lenbSeen >= lengthb - 1)
+    else if (lenbSeen > lengthb - 1)
     {
+        fprintf(stderr, "here3\n");
         return 1;
     }
     else
