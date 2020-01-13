@@ -955,8 +955,8 @@ int scanLetter(UCS2 *ucs2String, int len, UCS2 *letterCode, int *accentBitMask, 
 //this should consider space or comma the end of the word
 int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned char *b)
 {
-    char *aa = a; //for debugging
-    char *bb = b; //for debugging
+    const unsigned char *aa = a; //for debugging
+    const unsigned char *bb = b; //for debugging
     
     int ucs2Chara, ucs2Charb; //int because UCS2 is unsigned.
     int typea, typeb;
