@@ -975,7 +975,7 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
         a = ap;
         if (ucs2Chara == -1)
         {
-            assert(1 == 2);
+            assert(ucs2Chara > -1);
             return -1; //error
         }
         else
@@ -992,11 +992,11 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
             {
                 ucs2Charb = utf8_to_ucs2 (b, &bp);
                 lenbSeen += (bp - b);
-                printf("AAA: %d\n", (bp - b));
+                //printf("AAA: %d\n", (bp - b));
                 b = bp;
                 if (ucs2Charb == -1)
                 {
-                    assert(1 == 2);
+                    assert(ucs2Charb > -1);
                     return -1; //error
                 }
                 else
@@ -1028,7 +1028,7 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
             if (typea == NOCHAR || typeb == NOCHAR)
             {
                 fprintf(stderr, "s: %.*s B %.*s %04X %04X %04X %04X\n", lengtha, aa, lengthb, bb, ucs2Chara, ucs2Charb, a1, b1);
-                assert(1 == 2);
+                assert(typea != NOCHAR && typeb != NOCHAR);
                 return -1;//error
             }
         
@@ -1065,29 +1065,22 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
                 }
                 else
                 {
-                    fprintf(stderr, "AAA: %d %d %d %d\n", lenaSeen, lengtha, lenbSeen, lengthb);
-                    printf("here\n");
                     continue;
                 }
             }
         }
     }
-    fprintf(stderr, "s: %.*s B %.*s %04X %04X %04X %04X\n", lengtha, aa, lengthb, bb, ucs2Chara, ucs2Charb, a1, b1);
-    fprintf(stderr, "%d %d %d %d\n", lenaSeen, lengtha, lenbSeen, lengthb);
-    //assert(1 == 2); //error
+
     if ((lenaSeen == lengtha) && (lenbSeen == lengthb))
     {
-        fprintf(stderr, "here1\n");
         return 0;
     }
     else if (lenaSeen == lengtha)
     {
-        fprintf(stderr, "here2\n");
         return -1;
     }
     else if (lenbSeen == lengthb)
     {
-        fprintf(stderr, "here3\n");
         return 1;
     }
     else
