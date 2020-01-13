@@ -1,7 +1,9 @@
-https://stackoverflow.com/questions/30898113/how-to-compile-an-extension-into-sqlite
+Testing Repo for an Ancient Greek SQLite collation
 
 https://www.sqlite.org/loadext.html
+https://www.sqlite.org/c3ref/create_collation.html
 https://www.sqlite.org/howtocompile.html
+https://stackoverflow.com/questions/30898113/how-to-compile-an-extension-into-sqlite
 
 https://stackoverflow.com/questions/16806570/how-do-i-compare-characters-in-custom-sqlite-collation-in-objective-c
 

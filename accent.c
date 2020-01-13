@@ -992,6 +992,7 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
             {
                 ucs2Charb = utf8_to_ucs2 (b, &bp);
                 lenbSeen += (bp - b);
+                printf("AAA: %d\n", (bp - b));
                 b = bp;
                 if (ucs2Charb == -1)
                 {
@@ -1002,7 +1003,14 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
                 {
                     if (ucs2Charb == 0x0020 || ucs2Charb == 0x002C || ucs2Charb == 0x2014 || ucs2Charb == 0x002D || ucs2Charb == 0x002E)
                     {
-                        continue;
+                        if (lenbSeen == lengthb )
+                        {
+                            return 1; //last char in b is one to skip
+                        }
+                        else
+                        {
+                            continue;
+                        }
                     }
                     if (!isCombiningDiacritic(ucs2Charb))
                     {
@@ -1043,37 +1051,41 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
             }
             else
             {
-                if ((lenaSeen >= lengtha - 1) && (lenbSeen >= lengthb - 1))
+                if ((lenaSeen == lengtha ) && (lenbSeen == lengthb ))
                 {
                     return 0;
                 }
-                else if (lenaSeen >= lengtha - 1)
+                else if (lenaSeen == lengtha )
                 {
                     return -1;
                 }
-                else if (lenbSeen >= lengthb - 1)
+                else if (lenbSeen == lengthb )
                 {
                     return 1;
                 }
                 else
                 {
+                    fprintf(stderr, "AAA: %d %d %d %d\n", lenaSeen, lengtha, lenbSeen, lengthb);
+                    printf("here\n");
                     continue;
                 }
             }
         }
     }
-    assert(1 == 2); //error
-    if ((lenaSeen > lengtha - 1) && (lenbSeen > lengthb - 1))
+    fprintf(stderr, "s: %.*s B %.*s %04X %04X %04X %04X\n", lengtha, aa, lengthb, bb, ucs2Chara, ucs2Charb, a1, b1);
+    fprintf(stderr, "%d %d %d %d\n", lenaSeen, lengtha, lenbSeen, lengthb);
+    //assert(1 == 2); //error
+    if ((lenaSeen == lengtha) && (lenbSeen == lengthb))
     {
         fprintf(stderr, "here1\n");
         return 0;
     }
-    else if (lenaSeen > lengtha - 1)
+    else if (lenaSeen == lengtha)
     {
         fprintf(stderr, "here2\n");
         return -1;
     }
-    else if (lenbSeen > lengthb - 1)
+    else if (lenbSeen == lengthb)
     {
         fprintf(stderr, "here3\n");
         return 1;
