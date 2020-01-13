@@ -3,30 +3,32 @@
 #include "accent.h"
 #include <assert.h>
 
-int main()
+// gcc -pedantic test.c accent.c utilities.c -o ztest
+
+int main(int argc, char **argv)
 {
-    
-    const unsigned char *a = "ἀνάξιος, ἀνάξιον";
+    char *a = "ἀνάξιος, ἀνάξιον";
     int lena = strlen(a);
-    const unsigned char *b = "ἀνα-";
+    char *b = "ἀνα-";
     int lenb = strlen(b);
-    int c = compareSort(lena, a, lenb, b);
+    int c = compareSort(lena, (const unsigned char *)a, lenb, (const unsigned char *)b);
     assert(c == 1);
     
 
-    const unsigned char *a2 = "ἀνα-";
+    char *a2 = "ἀνα-";
     int lena2 = strlen(a2);
-    const unsigned char *b2 = "ἀνάξιος, ἀνάξιον";
+    char *b2 = "ἀνάξιος, ἀνάξιον";
     int lenb2 = strlen(b2);
-    int c2 = compareSort(lena2, a2, lenb2, b2);
+    int c2 = compareSort(lena2, (const unsigned char *)a2, lenb2, (const unsigned char *)b2);
     assert(c2 == -1);
     
     
-    const unsigned char *a3 = "καί";
+    char *a3 = "καί";
     int lena3 = strlen(a3);
-    const unsigned char *b3 = "καί ... καί";
+    char *b3 = "καί ... καί";
     int lenb3 = strlen(b3);
-    int c3 = compareSort(lena3, a3, lenb3, b3);
+    int c3 = compareSort(lena3, (const unsigned char *)a3, lenb3, (const unsigned char *)b3);
     assert(c3 == -1);
  
+    return 0;
 }
