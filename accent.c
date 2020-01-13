@@ -1039,22 +1039,36 @@ int compareSort(int lengtha, const unsigned char *a, int lengthb, const unsigned
             else
             {
                 if ((lenaSeen >= lengtha - 1) && (lenbSeen >= lengthb - 1))
+                {
                     return 0;
+                }
                 else if (lenaSeen >= lengtha - 1)
+                {
                     return -1;
+                }
                 else if (lenbSeen >= lengthb - 1)
+                {
                     return 1;
+                }
                 else
+                {
                     continue;
+                }
             }
         }
     }
     if ((lenaSeen >= lengtha - 1) && (lenbSeen >= lengthb - 1))
+    {
         return 0;
+    }
     else if (lenaSeen >= lengtha - 1)
+    {
         return -1;
+    }
     else if (lenbSeen >= lengthb - 1)
+    {
         return 1;
+    }
     else
     {
         assert(1 == 2); //error
