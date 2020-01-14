@@ -39,6 +39,31 @@ SQLITE_EXTENSION_INIT1
 #include <string.h>
 #include <stdio.h>
 #include "accent.h"
+#include <assert.h>
+
+static void uchex(sqlite3_context* ctx, int argc, sqlite3_value** argv) {
+    assert(argc == 1);
+    if (sqlite3_value_type(argv[0]) == SQLITE_TEXT)
+    {
+        unsigned const char *a = sqlite3_value_text(argv[0]);
+        int bufferLen = 1024;
+        char buffer[bufferLen];
+        hcucHex(a, bufferLen, buffer);
+
+        sqlite3_result_text(ctx, buffer, -1, SQLITE_TRANSIENT);
+    }
+    else
+    {
+      sqlite3_result_null(ctx);
+    }
+}
+
+static void containsPUA(sqlite3_context* ctx, int argc, sqlite3_value** argv) {
+    assert(argc == 1);
+    const unsigned char *a = sqlite3_value_text(argv[0]);
+    int containsPUA = hccontainsPUA(a);
+    sqlite3_result_int(ctx, containsPUA);
+}
 
 static int hcgreekFunc(
   void *NotUsed,
@@ -68,5 +93,9 @@ int sqlite3_hcgreek_init(
   int rc = SQLITE_OK;
   SQLITE_EXTENSION_INIT2(pApi);
   rc = sqlite3_collation_needed(db, 0, hcgreekNeeded);
+    
+    sqlite3_create_function(db, "isPUA", 1, SQLITE_UTF8 | SQLITE_DETERMINISTIC, NULL, &containsPUA, NULL, NULL);
+    sqlite3_create_function(db, "HCHEX", 1, SQLITE_UTF8 | SQLITE_DETERMINISTIC, NULL, &uchex, NULL, NULL);
+    
   return rc;
 }
