@@ -79,7 +79,7 @@ static void hcgreekNeeded(
   int eTextRep,
   const char *zCollName
 ){
-  sqlite3_create_collation(db, zCollName, eTextRep, 0, hcgreekFunc);
+  sqlite3_create_collation(db, "hcgreek", eTextRep, 0, hcgreekFunc);
 }
 
 #ifdef _WIN32

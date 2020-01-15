@@ -944,7 +944,7 @@ int hcucHex(const unsigned char *a, int bufferLen, char *buffer)
         if (uc_a == -1)
         {
             assert(uc_a > -1);
-            return 1; //error
+            return -1; //error
         }
         else
         {
