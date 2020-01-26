@@ -71,6 +71,8 @@ static int hcgreekFunc(
   int nKey2, const void *pKey2
 ){
     return compareSort(nKey1, pKey1, nKey2, pKey2);
+    //int s = (nKey1 < nKey2) ? nKey1 : nKey2;
+    //return memcmp(pKey1, pKey2, s);
 }
 
 static void hcgreekNeeded(
