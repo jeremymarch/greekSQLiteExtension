@@ -999,11 +999,21 @@ int hccontainsPUA(const unsigned char *a)
     return 0;
 }
 
-
+/*
+ get a char or aend
+    get b char or bend
+    if both not at end compare, if same and not at end continue, else return
+ if one or both at end, equal if both, else compare return
+ 
+ if we get to the end of a, we still need to go through b one more time to see if they are the same length
+ 
+*/
 //returns -1 if a is before b, 0 if equal, 1 if b is before a
 //skip everything until real greek char, then stop at first non-greek or end
+//maybe only comma should cause end of lemma?
 int compareSort(int len_a, const unsigned char *a, int len_b, const unsigned char *b)
 {
+    //take care of zero length arguments
     if (len_a < 1 && len_b < 1)
     {
         return 0;
@@ -1016,9 +1026,6 @@ int compareSort(int len_a, const unsigned char *a, int len_b, const unsigned cha
     {
         return 1;
     }
-    
-    const unsigned char *aa = a; //for debugging
-    const unsigned char *bb = b; //for debugging
     
     int uc_a = 0; //int because UCS2 is unsigned
     int uc_b = 0; //int because UCS2 is unsigned
@@ -1034,7 +1041,7 @@ int compareSort(int len_a, const unsigned char *a, int len_b, const unsigned cha
     const unsigned char *end_b;
     bool seenOne_a = false;
     bool seenOne_b = false;
-    
+
     for( ; idx_a < len_a ; )
     {
         printf("n6\n");
@@ -1043,7 +1050,7 @@ int compareSort(int len_a, const unsigned char *a, int len_b, const unsigned cha
         a = end_a;
         if (uc_a == -1)
         {
-            assert(uc_a > -1);
+            assert(uc_a > -1); //bad utf8
             //return -1; //error
             //continue;
             idx_a = len_a;
@@ -1058,7 +1065,17 @@ int compareSort(int len_a, const unsigned char *a, int len_b, const unsigned cha
             }*/
             if (isCombiningDiacritic(uc_a))
             {
-                continue;
+                printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXAAA\n");
+                if (idx_a >= len_a)
+                {
+                    goto FALLTHROUGH; //
+                }
+                else
+                {
+                    continue;
+                }
+                //fallThrough = true;
+                
             }
             
             base_a = 0; //reset for debugging
@@ -1111,9 +1128,11 @@ int compareSort(int len_a, const unsigned char *a, int len_b, const unsigned cha
                 }
                 printf("A: %04x\n", base_a);
             }
+        FALLTHROUGH:
             for( ; idx_b < len_b ; )
             {
                 uc_b = utf8_to_ucs2 (b, &end_b);
+                printf("1 index %d, %d, %04X\n", idx_b, len_b, uc_b);
                 idx_b += (end_b - b);
                 //printf("AAA: %d\n", (bp - b));
                 b = end_b;
@@ -1141,6 +1160,8 @@ int compareSort(int len_a, const unsigned char *a, int len_b, const unsigned cha
                     }*/
                     if (isCombiningDiacritic(uc_b))
                     {
+                        
+                        printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXBBB\n");
                         continue;
                     }
                     
@@ -1200,7 +1221,6 @@ int compareSort(int len_a, const unsigned char *a, int len_b, const unsigned cha
                     
                 }
                 printf("n2\n");
-                
             }
             printf("n3\n");
             /*
@@ -1223,48 +1243,101 @@ int compareSort(int len_a, const unsigned char *a, int len_b, const unsigned cha
             //compare here
             if (sort_a > sort_b)
             {
+                printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX1\n");
                 return 1;
             }
             else if (sort_b > sort_a)
             {
-                printf("a\n");
+                printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX2\n");
                 return -1;
             }
             else
             {
+                continue;
+                /*
                 if ((idx_a == len_a ) && (idx_b == len_b ))
                 {
+                    printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX3\n");
                     return 0;
                 }
                 else if (idx_a == len_a )
                 {
+                    printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX4\n");
                     return -1;
                 }
                 else if (idx_b == len_b )
                 {
+                    printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX5\n");
                     return 1;
                 }
                 else
                 {
+                    printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX6\n");
                     continue;
-                }
+                }*/
             }
             printf("n4\n");
         }
         printf("n5\n");
     }
-
-    if ((idx_a == len_a) && (idx_b == len_b))
+    
+    //we need to be sure b does not have any testable chars left; what if it has combining at end.
+    bool bHasMore = false;
+    for( ; idx_b < len_b ; )
     {
+        printf("gggg\n");
+        uc_b = utf8_to_ucs2 (b, &end_b);
+        printf("2 index %d, %d, %04X\n", idx_b, len_b, uc_b);
+        idx_b += (end_b - b);
+        //printf("AAA: %d\n", (bp - b));
+        b = end_b;
+        if (uc_b == -1)
+        {
+            assert(uc_b > -1);
+            //return -1; //error
+            //continue;
+            idx_b = len_b;
+            break;
+        }
+        else
+        {
+            if (isCombiningDiacritic(uc_b))
+            {
+                printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXBBBfff\n");
+                continue;
+            }
+            
+            base_b = 0; //reset for debugging
+            type_b = analyzePrecomposedLetter(uc_b, &base_b, &diacritics_b);
+            if (type_b != NOCHAR)
+            {
+                bHasMore = true;
+                printf("hhhhhhh\n");
+                break;
+            }
+            else
+            {
+                bHasMore = false;
+                 printf("hhhhhhh\n");
+                 break;
+            }
+        }
+    }
+    
+    
+    if ((idx_a == len_a) && !bHasMore)
+    {
+        printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX7\n");
         return 0;
     }
     else if (idx_a == len_a)
     {
-        printf("b\n");
+        printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX8\n");
         return -1;
     }
-    else if (idx_b == len_b)
+    else if (!bHasMore)
     {
+        printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX9\n");
         return 1;
     }
     else
